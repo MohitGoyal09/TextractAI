@@ -23,7 +23,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 
 
 // For production, use environment variables
-const API_KEY = 'AIzaSyD9uxzpAb2Qj9TITjjV1WYzqV9uuZRfPhQ'
+const API_KEY = 'Your Api-Key'
 
 
 
