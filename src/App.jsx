@@ -1,8 +1,9 @@
 import './App.css'
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Button } from './components/ui/button'
 import { Textarea } from "@/components/ui/textarea"
 import { Upload } from 'lucide-react'
+import { FaGithub } from 'react-icons/fa'; // Import GitHub icon
 import {
   Card,
   CardContent,
@@ -19,19 +20,11 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
-
-
-
-// For production, use environment variables
-const API_KEY = 'AIzaSyD9uxzpAb2Qj9TITjjV1WYzqV9uuZRfPhQ'
-
-
-
+const API_KEY = String(import.meta.env.VITE_GEMINI_API_KEY);
 
 function App() {
   const [summary, setSummary] = useState('');
   const [pdfText, setPdfText] = useState(null);
-  const [apiKey, setApiKey] = useState(API_KEY);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = async (event) => {
@@ -64,8 +57,8 @@ function App() {
   };
 
   const summarizeText = async () => {
-    if (!apiKey) {
-      setSummary('Error: API key is not set. Please enter your API key.');
+    if (!API_KEY) {
+      setSummary('API key is not set. Please enter your API key.');
       return;
     }
 
@@ -76,9 +69,9 @@ function App() {
 
     setIsLoading(true);
     console.log("PDF text to summarize:", pdfText);
-    console.log("API Key:", apiKey);
+    
 
-    const genAi = new GoogleGenerativeAI(apiKey);
+    const genAi = new GoogleGenerativeAI(API_KEY);
     const model = genAi.getGenerativeModel({ model: "gemini-pro" });
     
     try {
@@ -96,64 +89,73 @@ function App() {
   }
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='font-bold text-2xl mb-4'>PDF Summarizer</h1>
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>API Key</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input 
-            type="text" 
-            value={apiKey} 
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="Enter your API key"
-            aria-label="API Key Input"
-          />
-        </CardContent>
-      </Card>
-      <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Upload PDF</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center space-x-2">
-            <Input 
-              type="file" 
-              accept=".pdf" 
-              onChange={handleFileUpload} 
-              disabled={isLoading}
-              aria-label="Upload PDF file"
-            />
-            <Button disabled={isLoading}>
-              <Upload className="mr-2 h-4 w-4" /> Upload
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      <Button 
-        onClick={summarizeText} 
-        className="mb-4" 
-        disabled={isLoading || !pdfText}
-      >
-        {isLoading ? 'Processing...' : 'Summarize'}
-      </Button>
-      <Card>
-        <CardHeader>
-          <CardTitle>Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Textarea 
-            value={summary} 
-            readOnly 
-            placeholder="Summary will appear here..." 
-            className='min-h-[200px]'
-            aria-label="Summary Output"
-          />
-        </CardContent>
-      </Card>
+    <div className="App">
+      <header className="App-header">
+        <h1 className="App-title">PDF Summarizer</h1>
+        <a
+          href="https://github.com/MohitGoyal09"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub Profile"
+          className="github-icon"
+        >
+          <FaGithub size={30} />
+        </a>
+      </header>
+
+      <main>
+        <div className="container mx-auto p-4">
+          
+
+          <Card className="mb-4">
+            <CardHeader>
+              <CardTitle>Upload PDF</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  disabled={isLoading}
+                  aria-label="Upload PDF file"
+                />
+                <Button disabled={isLoading}>
+                  <Upload className="mr-2 h-4 w-4" /> Upload
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          <Button
+            onClick={summarizeText}
+            className="mb-4"
+            disabled={isLoading || !pdfText}
+          >
+            {isLoading ? "Processing..." : "Summarize"}
+          </Button>
+          <Card>
+            <CardHeader>
+              <CardTitle>Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={summary}
+                readOnly
+                placeholder="Summary will appear here..."
+                className="min-h-[200px]"
+                aria-label="Summary Output"
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+      <footer className="App-footer">
+        <p>
+          &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+        </p>
+      </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
