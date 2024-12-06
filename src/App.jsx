@@ -20,18 +20,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
-<<<<<<< HEAD
 const API_KEY = String(import.meta.env.VITE_GEMINI_API_KEY);
-=======
-
-
-
-// For production, use environment variables
-const API_KEY = 'Your Api-Key'
-
-
-
->>>>>>> e48af2154d5a411d0a7e212338b190f2a101fc75
 
 function App() {
   const [summary, setSummary] = useState('');
