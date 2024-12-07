@@ -1,8 +1,8 @@
 import "./App.css";
-import { useState, useRef } from "react";
+import  { useState, useRef } from "react";
 import { Button } from "./components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, X } from "lucide-react";
+import { FaUpload, FaTimes } from "react-icons/fa"; // Import specific icons
 import { FaGithub } from "react-icons/fa"; // Import GitHub icon
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -56,19 +56,6 @@ function App() {
   };
 
   const summarizeText = async () => {
-    if (!API_KEY) {
-      setSummary("API key is not set. Please enter your API key.");
-      return;
-    }
-
-    if (!pdfText) {
-      setSummary("Error: No PDF text to summarize. Please upload a PDF first.");
-      return;
-    }
-
-    setIsLoading(true);
-    console.log("PDF text to summarize:", pdfText);
-
     const genAi = new GoogleGenerativeAI(API_KEY);
     const model = genAi.getGenerativeModel({ model: "gemini-pro" });
 
@@ -149,11 +136,11 @@ function App() {
                   disabled={isLoading}
                   variant="outline"
                 >
-                  <Upload className="mr-2 h-4 w-4" /> Browse
+                  <FaUpload className="mr-2 h-4 w-4" /> Browse
                 </Button>
                 {selectedFile && (
                   <Button onClick={clearFile} variant="destructive" size="icon">
-                    <X className="h-4 w-4" />
+                    <FaTimes className="h-4 w-4" />
                   </Button>
                 )}
               </div>
@@ -166,6 +153,13 @@ function App() {
           >
             {isLoading ? "Processing..." : "Summarize"}
           </Button>
+          <div className="px-5 py-2 font-bold">How much longer summary you want?</div>
+          <div className="flex">
+            <Button className = "mr-4 px-4">Long</Button>
+            <Button className = "px-4">Medium</Button>
+            <Button className = "ml-4 px-4">Short</Button>
+          </div>
+         
           <Card>
             <CardHeader>
               <CardTitle>Summary</CardTitle>
