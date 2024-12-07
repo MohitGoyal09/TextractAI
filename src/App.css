@@ -1,3 +1,13 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add your custom styles below */
+body {
+  @apply bg-gray-100 text-gray-900;
+}
+
 .App-header {
   display: flex;
   justify-content: center;
