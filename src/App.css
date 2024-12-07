@@ -10,7 +10,7 @@ body {
 
 .App-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: 1rem;
   background-color: #282c34;
@@ -28,29 +28,33 @@ body {
 
 .App-title {
   font-size: 1.5rem;
-  font-weight: bold;
 }
 
 .github-icon {
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.github-icon:hover {
-  color: #61dafb;
+  margin-left: auto;
 }
 
 .App-footer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 1rem;
   background-color: #282c34;
   color: white;
   position: fixed;
-  width: 100%;
   bottom: 0;
+  width: 100%;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.App-footer p {
-  margin: 0;
+.App-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.App-footer-text {
+  font-size: 1rem;
 }
