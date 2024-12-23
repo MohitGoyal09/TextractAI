@@ -1,13 +1,14 @@
 import "./App.css";
-import  { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Button } from "./components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { FaUpload, FaTimes } from "react-icons/fa"; // Import specific icons
-import { FaGithub } from "react-icons/fa"; // Import GitHub icon
+import { FaUpload, FaTimes } from "react-icons/fa";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import * as pdfjsLib from "pdfjs-dist";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Header from "./components/Header"; // Import Header
+import Footer from "./components/Footer"; // Import Footer
 
 // Set up the worker for PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -23,50 +24,54 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
+  const [summaryLength, setSummaryLength] = useState("medium"); // Added state for summary length
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setIsLoading(true);
-      try {
-        const text = await extractPdfText(file);
-        console.log("Extracted PDF text:", text);
-        setPdfText(text);
-      } catch (error) {
-        console.error("Error extracting PDF text:", error);
-        setSummary("Error extracting PDF text. Please try another file.");
-        setSelectedFile(null);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+ const handleFileUpload = async (event) => {
+   const file = event.target.files[0];
+   if (file) {
+     setSelectedFile(file);
+     setIsLoading(true);
+     try {
+       const text = await extractPdfText(file);
+       console.log("Extracted PDF text:", text);
+       setPdfText(text);
+     } catch (error) {
+       console.error("Error extracting PDF text:", error);
+       setSummary("Error extracting PDF text. Please try another file.");
+       setSelectedFile(null);
+     } finally {
+       setIsLoading(false);
+     }
+   }
+ };
 
-  const extractPdfText = async (file) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-    let text = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      text += content.items.map((item) => item.str).join(" ") + " ";
-    }
-    return text.trim();
-  };
-
+   const extractPdfText = async (file) => {
+     const arrayBuffer = await file.arrayBuffer();
+     const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+     let text = "";
+     for (let i = 1; i <= pdf.numPages; i++) {
+       const page = await pdf.getPage(i);
+       const content = await page.getTextContent();
+       text += content.items.map((item) => item.str).join(" ") + " ";
+     }
+     return text.trim();
+   };
+  
   const summarizeText = async () => {
+    if (!pdfText) return; // Prevent summarizing without text
+    setIsLoading(true);
+    setSummary("Generating summary..."); // Provide immediate feedback
+
     const genAi = new GoogleGenerativeAI(API_KEY);
     const model = genAi.getGenerativeModel({ model: "gemini-pro" });
 
     try {
-      const result = await model.generateContent(
-        `Summarize the following text: ${pdfText}`
-      );
+      const prompt = `Summarize the following text in a ${summaryLength} length: ${pdfText}`;
+      const result = await model.generateContent(prompt);
       console.log("API Response:", result);
       const response = await result.response;
-      const summary = response.text();
-      setSummary(summary);
+      const summaryText = response.text();
+      setSummary(summaryText);
     } catch (error) {
       console.error("Error generating summary:", error);
       setSummary(
@@ -85,29 +90,25 @@ function App() {
 
   const clearFile = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Clear the file input
+      fileInputRef.current.value = "";
     }
     setSelectedFile(null);
     setPdfText(null);
     setSummary("");
   };
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1 className="App-title">PDF Summarizer</h1>
-        <a
-          href="https://github.com/MohitGoyal09"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub Profile"
-          className="github-icon"
-        >
-          <FaGithub size={30} />
-        </a>
-      </header>
+  const handleSummaryLength = (length) => {
+    setSummaryLength(length);
+  };
 
-      <main>
+  return (
+    <div className="app">
+      {" "}
+      {/* Changed className to lowercase */}
+      <Header />
+      <main className="app-main">
+        {" "}
+        {/* Added a main container */}
         <div className="container mx-auto p-4">
           <Card className="mb-4">
             <CardHeader>
@@ -146,20 +147,55 @@ function App() {
               </div>
             </CardContent>
           </Card>
+          <div className="mb-4">
+            <div className="px-1 py-2 font-bold">
+              How much longer summary do you want?
+            </div>
+            <div className="flex space-x-2">
+              <Button
+                className={`px-4 ${
+                  summaryLength === "long"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                    : "bg-secondary hover:bg-secondary/80"
+                }`}
+                onClick={() => handleSummaryLength("long")}
+                disabled={isLoading || !pdfText}
+              >
+                Long
+              </Button>
+              <Button
+                className={`px-4 ${
+                  summaryLength === "medium"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                    : "bg-secondary hover:bg-secondary/80"
+                }`}
+                onClick={() => handleSummaryLength("medium")}
+                disabled={isLoading || !pdfText}
+              >
+                Medium
+              </Button>
+              <Button
+                className={`px-4 ${
+                  summaryLength === "short"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/80"
+                    : "bg-secondary hover:bg-secondary/80"
+                }`}
+                onClick={() => handleSummaryLength("short")}
+                disabled={isLoading || !pdfText}
+              >
+                Short
+              </Button>
+            </div>
+          </div>
           <Button
             onClick={summarizeText}
-            className="mb-4"
+            className="mb-4 w-full" // Make the summarize button full width
             disabled={isLoading || !pdfText}
+            isLoading={isLoading} // Use shadcn-ui's isLoading prop for visual feedback
           >
             {isLoading ? "Processing..." : "Summarize"}
           </Button>
-          <div className="px-5 py-2 font-bold">How much longer summary you want?</div>
-          <div className="flex">
-            <Button className = "mr-4 px-4">Long</Button>
-            <Button className = "px-4">Medium</Button>
-            <Button className = "ml-4 px-4">Short</Button>
-          </div>
-         
+
           <Card>
             <CardHeader>
               <CardTitle>Summary</CardTitle>
@@ -169,18 +205,14 @@ function App() {
                 value={summary}
                 readOnly
                 placeholder="Summary will appear here..."
-                className="min-h-[200px]"
+                className="min-h-[200px] w-full resize-none" // Make textarea full width and disable resize
                 aria-label="Summary Output"
               />
             </CardContent>
           </Card>
         </div>
       </main>
-      <footer className="App-footer">
-        <p>
-          &copy; {new Date().getFullYear()} Made by Mohit . All rights reserved.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

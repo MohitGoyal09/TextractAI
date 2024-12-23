@@ -8,53 +8,43 @@ body {
   @apply bg-gray-100 text-gray-900;
 }
 
-.App-header {
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the app takes up at least the full viewport height */
+}
+
+.app-header {
+  background-color: #f0f0f0; /* Light background for header */
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background-color: #282c34;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #ccc;
 }
 
-.App-header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.App-title {
+.app-title {
   font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .github-icon {
-  margin-left: auto;
+  color: #333; /* Dark color for GitHub icon */
+  transition: color 0.3s ease;
 }
 
-.App-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.github-icon:hover {
+  color: #007bff; /* Example hover color */
+}
+
+.app-main {
+  flex-grow: 1; /* Allow the main content to take up remaining vertical space */
+}
+
+.app-footer {
+  background-color: #f0f0f0;
   padding: 1rem;
-  background-color: #282c34;
-  color: white;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border-top: 1px solid #ccc;
 }
-
-.App-footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.App-footer-text {
-  font-size: 1rem;
-}
+/* ... rest of your existing CSS ... */
